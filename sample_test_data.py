@@ -38,7 +38,7 @@ if __name__ == "__main__":
     movie_set = set(movie_set)
     print("item numbers:", len(movie_set))
 
-    train_reader = codecs.open("data/origin_data/user_rate_movie_train.txt", mode="r", encoding="utf-8")
+    train_reader = codecs.open("data/sample_data/user_item_train.txt", mode="r", encoding="utf-8")
     train_user_dict = dict()
     line = train_reader.readline()
     while line:
@@ -68,9 +68,9 @@ if __name__ == "__main__":
         item_fq_dict[line_list[0]] = float(line_list[1])
     item_fq_reader.close()
 
-    for alpha in [0.4, 0.6, 0.8, 1.0]:
+    for alpha in [0.2, 0.4, 0.6, 0.8, 1.0]:
         print("generate new item sample pros with alpha:", alpha)
-        itemFqDict = generate_fq_dict(alpha=0.2, origin_fq_dict=item_fq_dict)
+        itemFqDict = generate_fq_dict(alpha=alpha, origin_fq_dict=item_fq_dict)
 
         test_writer = codecs.open("data/sample_data/user_item_test_"+str(alpha)+".txt", mode="w", encoding="utf-8")
         nums = 0
