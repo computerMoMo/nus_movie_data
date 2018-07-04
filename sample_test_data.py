@@ -68,25 +68,26 @@ if __name__ == "__main__":
         item_fq_dict[line_list[0]] = float(line_list[1])
     item_fq_reader.close()
 
-    print("generate new item sample pros")
-    itemFqDict = generate_fq_dict(alpha=0.2, origin_fq_dict=item_fq_dict)
+    for alpha in [0.4, 0.6, 0.8, 1.0]:
+        print("generate new item sample pros with alpha:", alpha)
+        itemFqDict = generate_fq_dict(alpha=0.2, origin_fq_dict=item_fq_dict)
 
-    test_writer = codecs.open("user_item_test_0.2.txt", mode="w", encoding="utf-8")
-    nums = 0
-    for user_id, pos_item_list in test_pos_dict.items():
-        pos_item_set = set(pos_item_list)
-        train_set = train_user_dict[user_id]
+        test_writer = codecs.open("data/sample_data/user_item_test_"+str(alpha)+".txt", mode="w", encoding="utf-8")
+        nums = 0
+        for user_id, pos_item_list in test_pos_dict.items():
+            pos_item_set = set(pos_item_list)
+            train_set = train_user_dict[user_id]
 
-        neg_item_list = list(movie_set-pos_item_set-train_set)
-        item_fq_list = [itemFqDict[item_id] for item_id in neg_item_list]
+            neg_item_list = list(movie_set-pos_item_set-train_set)
+            item_fq_list = [itemFqDict[item_id] for item_id in neg_item_list]
 
-        for pos_item_id in pos_item_list:
-            sample_id_list = sample_with_fq(sample_num=100, item_fq_list=item_fq_list)
-            neg_item_id_list = [neg_item_list[idx] for idx in sample_id_list]
-            test_writer.write(k + "\t" + pos_item_id + "\t" + "1.0\n")
-            for neg_id in neg_item_id_list:
-                test_writer.write(k + "\t" + neg_id + "\t" + "0.0\n")
-        nums += 1
-        if nums % 100 == 0:
-            print(nums)
-    test_writer.close()
+            for pos_item_id in pos_item_list:
+                sample_id_list = sample_with_fq(sample_num=100, item_fq_list=item_fq_list)
+                neg_item_id_list = [neg_item_list[idx] for idx in sample_id_list]
+                test_writer.write(k + "\t" + pos_item_id + "\t" + "1.0\n")
+                for neg_id in neg_item_id_list:
+                    test_writer.write(k + "\t" + neg_id + "\t" + "0.0\n")
+            nums += 1
+            if nums % 100 == 0:
+                print(nums)
+        test_writer.close()
